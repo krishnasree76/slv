@@ -1,0 +1,230 @@
+@import "tailwindcss";
+
+/* ================= SLV LUXURY THEME ================= */
+@theme {
+
+  /* ===== SLV Brand Identity Colors ===== */
+  --color-slv-purple: #55236F;
+  --color-slv-purple-deep: #3B144E;
+  --color-slv-purple-light: #723294;
+  
+  --color-slv-teal: #087E83;
+  --color-slv-teal-deep: #055C60;
+  --color-slv-teal-light: #0CAAB1;
+  
+  --color-slv-gold: #C6A15B;
+  --color-slv-gold-light: #DFC488;
+  --color-slv-gold-deep: #A47F37;
+
+  --color-slv-ivory: #FAF7F0;
+  --color-slv-cream: #F3ECE1;
+  --color-slv-sand: #E8DCCB;
+
+  /* ===== Existing Color Token Mapping for SLV Luxury Palette ===== */
+  --color-dark-maroon: #3B144E;      /* Royal Deep Plum */
+  --color-maroon-light: #55236F;     /* Signature SLV Purple */
+  --color-muted-maroon: #685A6E;     /* Soft Muted Charcoal-Plum */
+  --color-accent-teal: #087E83;      /* Rich Peacock Teal */
+  --color-accent-gold: #C6A15B;      /* Warm Festive Gold */
+
+  /* ===== Background & Border Colors ===== */
+  --color-white-bg: #FAF7F0;         /* Soft Luxury Ivory Background */
+  --color-cream-beige: #EFE6D8;      /* Warm Silk Cream */
+  --color-light-beige: #F7F2E9;      /* Delicate Pearl Cream */
+  --color-border-beige: #E5DACB;     /* Refined Neutral Border */
+  --color-brown-soft: #55236F;       /* Accent Tone */
+
+  /* ===== Typography ===== */
+  --font-sans: "Outfit", "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-serif: "Playfair Display", Georgia, serif;
+
+  /* ===== Shadows ===== */
+  --shadow-soft: 0 10px 30px rgba(59, 20, 78, 0.06);
+  --shadow-card: 0 14px 38px rgba(59, 20, 78, 0.08);
+  --shadow-gold: 0 8px 24px rgba(198, 161, 91, 0.25);
+  --shadow-purple: 0 8px 25px rgba(85, 35, 111, 0.28);
+  --shadow-teal: 0 8px 25px rgba(8, 126, 131, 0.25);
+
+  /* ===== Border Radius ===== */
+  --radius-card: 1.25rem;
+}
+
+/* ================= BASE STYLES ================= */
+@layer base {
+  * {
+    @apply box-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-white-bg);
+    color: #26172A;
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-serif);
+    font-weight: 600;
+    letter-spacing: -0.015em;
+  }
+
+  button {
+    @apply cursor-pointer transition-all duration-300;
+  }
+
+  img {
+    @apply select-none;
+  }
+
+  a {
+    @apply transition-colors duration-300;
+  }
+}
+
+/* ================= COMPONENTS ================= */
+@layer components {
+
+  /* ===== Primary Button ===== */
+  .btn-primary {
+    background-color: var(--color-slv-purple);
+    color: #FFFFFF;
+    padding: 0.875rem 2rem;
+    border-radius: 9999px;
+    font-weight: 600;
+    box-shadow: var(--shadow-purple);
+    transition: all 0.3s ease;
+  }
+  .btn-primary:hover {
+    background-color: var(--color-slv-purple-deep);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(59, 20, 78, 0.35);
+  }
+
+  /* ===== Secondary / Teal Button ===== */
+  .btn-teal {
+    background-color: var(--color-slv-teal);
+    color: #FFFFFF;
+    padding: 0.875rem 2rem;
+    border-radius: 9999px;
+    font-weight: 600;
+    box-shadow: var(--shadow-teal);
+    transition: all 0.3s ease;
+  }
+  .btn-teal:hover {
+    background-color: var(--color-slv-teal-deep);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(8, 126, 131, 0.35);
+  }
+
+  /* ===== Gold Outline Button ===== */
+  .btn-secondary {
+    border: 1.5px solid var(--color-slv-gold);
+    color: var(--color-slv-purple-deep);
+    padding: 0.875rem 2rem;
+    border-radius: 9999px;
+    font-weight: 600;
+    background-color: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(8px);
+    transition: all 0.3s ease;
+  }
+  .btn-secondary:hover {
+    background-color: #FFFFFF;
+    border-color: var(--color-slv-purple);
+    color: var(--color-slv-purple);
+    box-shadow: 0 6px 20px rgba(198, 161, 91, 0.2);
+    transform: translateY(-2px);
+  }
+
+  /* ===== Section Title ===== */
+  .section-title {
+    font-family: var(--font-serif);
+    color: var(--color-dark-maroon);
+    font-size: clamp(2rem, 4vw, 3rem);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+
+  .section-subtitle {
+    color: var(--color-muted-maroon);
+    font-size: 1.05rem;
+    margin-top: 0.75rem;
+  }
+
+  /* ===== Luxury Card ===== */
+  .card-soft {
+    background-color: #FFFFFF;
+    border-radius: var(--radius-card);
+    border: 1px solid var(--color-border-beige);
+    box-shadow: var(--shadow-soft);
+    transition: all 0.3s ease;
+  }
+  .card-soft:hover {
+    box-shadow: var(--shadow-card);
+    border-color: var(--color-slv-gold-light);
+  }
+
+  /* ===== Input Field ===== */
+  .input-soft {
+    width: 100%;
+    border: 1px solid var(--color-border-beige);
+    background-color: #FFFFFF;
+    padding: 0.75rem 1rem;
+    border-radius: 0.75rem;
+    outline: none;
+    transition: all 0.2s ease;
+  }
+  .input-soft:focus {
+    border-color: var(--color-slv-purple);
+    box-shadow: 0 0 0 3px rgba(85, 35, 111, 0.12);
+  }
+}
+
+/* ================= UTILITIES ================= */
+@layer utilities {
+  .glass-ivory {
+    background: rgba(250, 247, 240, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(229, 218, 203, 0.6);
+  }
+
+  .glass-card {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(239, 230, 216, 0.8);
+  }
+
+  .gold-gradient-text {
+    background: linear-gradient(135deg, #A47F37 0%, #C6A15B 50%, #896626 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .purple-gradient-text {
+    background: linear-gradient(135deg, #3B144E 0%, #55236F 60%, #723294 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .hover-lift {
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-card);
+  }
+
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}

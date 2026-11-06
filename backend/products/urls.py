@@ -1,0 +1,11 @@
+from django.urls import path
+from .views import CategoryListView, ProductByTagView, HeroImageListView, ValidateStockView, ProductListView, ProductDetailView
+
+urlpatterns = [
+    path('', ProductListView.as_view()),
+    path('<int:pk>/', ProductDetailView.as_view()),
+    path('categories/', CategoryListView.as_view()),
+    path('tag/<str:tag_name>/', ProductByTagView.as_view()),
+    path("hero/", HeroImageListView.as_view()),
+    path("validate-stock/", ValidateStockView.as_view()),
+]

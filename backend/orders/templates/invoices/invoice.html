@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+    /* ============================================================
+       THERMAL PRINT STYLES — GoDEX G500 | 80mm continuous roll
+       WeasyPrint fully honours @page size, no extra config needed.
+    ============================================================ */
+
+    @page {
+        size: 80mm auto;   /* width = paper; auto height = continuous feed */
+        margin: 0mm;       /* all spacing handled in CSS — no viewer margins */
+    }
+
+    /* Global reset: predictable box model + force B&W on thermal */
+    * {
+        box-sizing: border-box;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    /* Lock to exactly 80mm — prevents reflow if renderer sets wider viewport */
+    html, body {
+        width: 80mm;
+        margin: 0;
+        padding: 0;
+        background: #fff;
+        color: #000;
+    }
+
+    body {
+        /* DejaVu Sans Mono ships on most Linux servers (WeasyPrint host).
+           Falls back to Liberation Mono, then generic monospace.
+           Courier New is kept last — rarely present on Linux. */
+        font-family: 'DejaVu Sans Mono', 'Liberation Mono', 'Courier New', Courier, monospace;
+        font-size: 12px;
+        font-weight: bold;
+        padding: 3mm;   /* mm = absolute unit, consistent across DPI */
+    }
+
+    /* ── alignment helpers ───────────────────────────────────────── */
+    .text-center { text-align: center; }
+    .text-right  { text-align: right; }
+    .bold        { font-weight: bold; }
+
+    /* ── each invoice on its own page ───────────────────────────── */
+    .order-page {
+        page-break-after:  always;
+        break-after:       page;
+        page-break-inside: avoid;
+        break-inside:      avoid;
+    }
+
+    /* KEY FIX: prevents blank trailing page after the last invoice */
+    .order-page:last-child {
+        page-break-after: avoid;
+        break-after:      avoid;
+    }
+
+    /* ── slip — never split across pages ────────────────────────── */
+    .order-slip {
+        page-break-inside: avoid;
+        break-inside:      avoid;
+    }
+
+    /* ── outer border ────────────────────────────────────────────── */
+    /* 1.5px > 1px: 1px can vanish on a 203 DPI thermal print head */
+    .receipt-border {
+        border:  1.5px solid #000;
+        padding: 4mm;
+        width:   100%;
+    }
+
+    /* ── header ──────────────────────────────────────────────────── */
+    .header { padding: 2mm 0; }
+
+    .logo {
+        font-size:      18px;
+        text-transform: uppercase;
+        margin:         0 0 2px 0;
+        letter-spacing: 1px;
+    }
+
+    /* ── divider ─────────────────────────────────────────────────── */
+    .divider {
+        border:     none;
+        border-top: 1.5px dashed #000;   /* heavier = visible on thermal */
+        margin:     3px 0;
+    }
+
+    /* ── tables ──────────────────────────────────────────────────── */
+    table {
+        width:           100%;
+        border-collapse: collapse;
+        margin-bottom:   3px;
+    }
+
+    th {
+        text-align:    left;
+        border-bottom: 1.5px solid #000;
+        padding:       2px 0;
+        font-size:     11px;
+    }
+
+    td {
+        padding:       2px 0;
+        vertical-align: top;
+        word-wrap:     break-word;
+        overflow-wrap: break-word;
+    }
+
+    /* ── bill-to box ─────────────────────────────────────────────── */
+    /* Highlighted: solid double border + inverted label */
+    .bill-to {
+        border:    2px solid #000;
+        padding:   3mm;
+        margin:    5px 0;
+        font-size: 11px;
+    }
+
+    /* "BILL TO:" label — inverted (black bg, white text) */
+    .bill-to-label {
+        background:     #000;
+        color:          #fff;
+        font-size:      11px;
+        font-weight:    bold;
+        padding:        1px 4px;
+        margin-bottom:  3px;
+        display:        inline-block;
+        letter-spacing: 1px;
+    }
+
+    /* Customer name slightly larger for quick identification */
+    .bill-to-name {
+        font-size:   13px;
+        font-weight: bold;
+        margin:      2px 0;
+    }
+
+    /* ── GST breakdown table ─────────────────────────────────────── */
+    .tax-table {
+        margin-top: 6px;
+        border: 1.5px solid #000;
+    }
+
+    .tax-table th,
+    .tax-table td {
+        border:     1px solid #000;
+        font-size:  10px;
+        text-align: center;
+        padding:    2px;
+    }
+
+    /* ── grand total row ─────────────────────────────────────────── */
+    .grand-total {
+        font-size:   14px;
+        border-top:  1.5px double #000;
+        padding-top: 3px;
+    }
+
+    /* ── variant detail line ─────────────────────────────────────── */
+    /* pure #000 — #333 causes dithering artifacts on thermal heads */
+    .variant-details {
+        font-size:   10px;
+        margin-top:  1px;
+        color:       #000;
+        font-weight: bold;
+    }
+</style>
+</head>
+
+<body>
+
+{% for order in orders %}
+<div class="order-page">
+    <div class="receipt-border">
+        <div class="order-slip">
+
+            <div class="header text-center">
+                <h1 class="logo">Sri Laxmi Venkateshwara Selections</h1>
+                <p style="margin:2px 0;">Beside Ramalayam Temple, Mirdoddi, Siddipet, Telangana, India</p>
+                <p style="margin:2px 0;">Phone: 9848439181, 8074254030</p>
+                <p style="margin:2px 0;">Email: ram.anne606@gmail.com</p>
+                <div class="divider"></div>
+                <p class="bold" style="font-size:14px;margin:2px 0;">TAX INVOICE</p>
+            </div>
+
+            <table style="font-size:11px;">
+                <tr>
+                    <td>INV: {{ order.order_number }}</td>
+                    <td class="text-right">DATE: {{ order.created_at|date:"d/m/Y" }}</td>
+                </tr>
+            </table>
+
+            <div class="bill-to">
+                <div class="bill-to-label">BILL TO:</div>
+                <div class="bill-to-name">{{ order.customer_name|upper }}</div>
+                {% if order.address %}
+                <div>{{ order.address }}, {{ order.city }}</div>
+                <div>{{ order.state }} - {{ order.pincode }}</div>
+                {% endif %}
+                {% if order.phone %}
+                <div>PH: {{ order.phone }}</div>
+                {% endif %}
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width:55%;">DESCRIPTION</th>
+                        <th class="text-right" style="width:10%;">QTY</th>
+                        <th class="text-right" style="width:35%;">AMT</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in order.items.all %}
+                    <tr>
+                        <td>
+                            <div class="bold">{{ item.variant.product.name|upper }}</div>
+                            {# Variant line — only shown when color or size exists.             #}
+                            {# Using item.variant.color directly (not .name) so it works       #}
+                            {# whether color is a plain CharField or a FK with __str__.        #}
+                            {% if item.variant.color or item.variant.size and item.variant.size != "0" %}
+                            <div class="variant-details">
+                                {% if item.variant.color %}CLR: {{ item.variant.color|upper }}{% endif %}
+                                {% if item.variant.size and item.variant.size != "0" %}
+                                    {% if item.variant.color %} | {% endif %}SZ: {{ item.variant.size|upper }}
+                                {% endif %}
+                            </div>
+                            {% endif %}
+                            <div style="font-size:10px;margin-top:1px;">HSN: 6204 | GST: 5%</div>
+                        </td>
+                        <td class="text-right">{{ item.quantity }}</td>
+                        <td class="text-right bold">₹{% widthratio item.variant.product.price 1 item.quantity %}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <div class="divider"></div>
+
+            <table>
+                <tr>
+                    <td class="text-right">Taxable Value:</td>
+                    <td class="text-right">₹{{ order.taxable_amount }}</td>
+                </tr>
+                <tr class="grand-total bold">
+                    <td class="text-right">GRAND TOTAL:</td>
+                    <td class="text-right">₹{{ order.total_amount }}</td>
+                </tr>
+            </table>
+
+            <div class="bold" style="margin-top:6px;font-size:10px;">GST BREAKUP</div>
+
+            <table class="tax-table">
+                <thead>
+                    <tr>
+                        <th>RATE</th>
+                        <th>TAXABLE</th>
+                        <th>CGST (2.5%)</th>
+                        <th>SGST (2.5%)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>5%</td>
+                        <td>{{ order.taxable_amount }}</td>
+                        <td>{{ order.cgst }}</td>
+                        <td>{{ order.sgst }}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="text-center" style="margin-top:12px;">
+                <p class="bold">THANK YOU VISIT AGAIN!</p>
+                <p style="font-size:9px;">Computer Generated Receipt</p>
+            </div>
+
+        </div><!-- /.order-slip -->
+    </div><!-- /.receipt-border -->
+</div><!-- /.order-page -->
+{% endfor %}
+
+</body>
+</html>
